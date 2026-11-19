@@ -131,8 +131,8 @@ bases = {"obitos": obitos, "populacao": populacao, "homem": homem, "raca": raca,
 bases.update({f"vab_{k}": v for k, v in vab.items()})
 bases.update(ifdm)
 
-
-for nome, df in bases.items():
-    print(f"\n===== {nome}: {df.shape[0]} linhas x {df.shape[1]} colunas")
-    print(df.head(3))
-    print(df.tail(2))
+if __name__ == "__main__":
+    for nome, df in bases.items():
+        print(f"\n===== {nome}: {df.shape[0]} linhas x {df.shape[1]} colunas")
+        print(df.head(3))
+        print(df.tail(2))
