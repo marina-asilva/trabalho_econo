@@ -95,7 +95,7 @@ raca = pd.read_excel(
 # A planilha tem uma aba por dimensão do índice; usamos só Emprego & Renda.
 ifdm = pd.read_excel(
     PASTA / "IFDM.xlsx",
-    sheet_name="IFDM Emprego&Renda",
+    sheet_name=["IFDM Emprego&Renda", "IFDM Educação", "IFDM Saúde"],
     dtype={"COD_MUNIC": str},
 )
 
@@ -127,8 +127,10 @@ populacao.columns = ["municipio", "pop_2019"]
 
 
 # --- Conferência rápida: dimensões e primeiras/últimas linhas de cada base
-bases = {"obitos": obitos, "populacao": populacao, "homem": homem, "raca": raca, "ifdm": ifdm, "dtb": dtb}
+bases = {"obitos": obitos, "populacao": populacao, "homem": homem, "raca": raca, "dtb": dtb}
 bases.update({f"vab_{k}": v for k, v in vab.items()})
+bases.update(ifdm)
+
 
 for nome, df in bases.items():
     print(f"\n===== {nome}: {df.shape[0]} linhas x {df.shape[1]} colunas")
