@@ -51,11 +51,18 @@ populacao = populacao.rename(columns={"cod": "cod_mun_6"})
 
 #TRATANDO RACA
 raca = raca.drop(index = [0])
-
+#TRATA IFDM 1
+#aplicando para uma aba apenas, para entender como funciona
+#print(ifdm["IFDM Emprego&Renda"].columns) # isso me confirmou que o nome das colunas eh igual ao do excel
+#ifdm["IFDM Emprego&Renda"] = ifdm["IFDM Emprego&Renda"].rename(columns={"COD_MUNIC":"cod_mun_6" }) # renomeando para poder ir para o merge 
+ifdm_rename = {}#aplicando o rename para todas as abas
+for nome_aba,tabela in ifdm.items():
+   ifdm_rename[nome_aba] = tabela.rename(columns={"COD_MUNIC":"cod_mun_6" })
 #ASSOCIANDO MUNICIPIOS E MICRORREGIOES
 def merge_municipio (tabela):
     ref = dtb[["cod_mun_6", "chave"]].drop_duplicates() #apenas retirando duplicatas, normal
     res = tabela.merge(ref, on = "cod_mun_6", how = "left", validate = "m:1", indicator = True) #funcao de merge -> funciona como procv
+    
     #fora = ~tabela["cod_mun_6"].isin(ref["cod_mun_6"])    # essa linha foi usada para conferir quais linhas nao estavam no merge -> com ela descobrimos que a primeira linha da raca sao informacoes do brasil, por isso tratamos raca no bloco de cima
     #print(res["_merge"].value_counts()) # isso eh continuacao da conferencia que esta no def 
     #print(tabela[fora]) # isso eh continuacao da conferencia que esta no def 
@@ -67,6 +74,8 @@ def merge_municipio (tabela):
 raca=merge_municipio(raca)
 homem=merge_municipio(homem)
 populacao=merge_municipio(populacao)
+for nome, t in ifdm_rename.items():
+   ifdm_rename[nome] = merge_municipio(t)
 #for nome,tabela in {"homem":homem,"raca":raca,"populacao":populacao}.items(): # confere se deu certo as mudancas de variavel depois do merge
 #   print(nome,tabela.head())
 #   print(nome,tabela.tail(10))
@@ -154,3 +163,45 @@ for setor in ["AGRO", "IND", "SERV", "ADM"]:
    temp["valor_2019"] = temp["valor_2019"]/100
    copia_vab[setor] = temp.set_index("cod_micro")["valor_2019"]
 #print(copia_vab.items())
+
+#TRATAMENTO IFDM 2
+cols_2019 = {
+    "emprego_renda": ("IFDM Emprego&Renda", "IFDM Emprego 2019"),
+    "educacao": ("IFDM Educação", "IFDM Educação 2019"),
+    "saude": ("IFDM Saúde", "IFDM Saúde 2019"),
+}
+
+series = {}
+for apelido, (aba, col) in cols_2019.items():
+    s = ifdm_rename[aba].set_index("cod_mun_6")[col]
+    series[apelido] = pd.to_numeric(s, errors="coerce")
+    #print(apelido,series[apelido].dtype)
+    #print(apelido,len(series[apelido]))
+    mascara = series[apelido].isna() & s.notna()
+    #print(apelido,s[mascara].unique())
+tab = pd.concat(series, axis=1)
+completos = tab.dropna()
+#print(len(tab), len(completos))
+pop_idx = populacao.set_index("cod_mun_6") #indice adaptado para o ifdm 
+completos["chave"] = pop_idx["chave"]
+completos["pop_2019"] = pop_idx["pop_2019"]
+
+#print(completos["chave"].isna().sum())
+#print(completos["pop_2019"].isna().sum()
+divisor2019_2 = completos.groupby("chave")["pop_2019"].sum()
+medias = {}
+for dim in ["emprego_renda", "educacao", "saude"]:
+    produto = completos[dim] * completos["pop_2019"]
+    microrregia_valida = produto.groupby(completos["chave"]).sum()
+    medias[dim] = microrregia_valida / divisor2019_2
+
+resultado = pd.DataFrame(medias)
+#print(resultado)
+#print(len(resultado))
+removidos = tab[tab.isna().any(axis=1)]
+cidades = ifdm_rename["IFDM Educação"].set_index("cod_mun_6")
+nomes_micro = dtb.drop_duplicates("chave").set_index("chave")["Nome_Microrregião"]
+info = cidades.loc[removidos.index, ["NOME_MUNIC"]].copy()
+info["chave"] = pop_idx.loc[removidos.index, "chave"]
+info["nome_micro"] = info["chave"].map(nomes_micro)
+print(pd.concat([info, removidos], axis=1))
