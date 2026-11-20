@@ -38,8 +38,8 @@ As bases foram baixadas manualmente dos sites das fontes.
 
 ## Base final (`base_final.xlsx`)
 
-Uma linha por microrregião (557 microrregiões), com a chave de 5 dígitos (código da UF + 3 dígitos da microrregião) como identificador. 
-*Foi esxluido DF que compõe uma microrregião, por isso há apenas 557 microrregiões. Para mais explicações conferir o relatório final
+Uma linha por microrregião (558 microrregiões), com a chave de 5 dígitos (código da UF + 3 dígitos da microrregião) como identificador. 
+
 
 - **`base`:** as variáveis da análise e a coluna `uf`.
 - **`dic1`:** o que cada coluna da aba `base` mede.
