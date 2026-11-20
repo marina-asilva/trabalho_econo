@@ -222,8 +222,8 @@ df_vab = pd.DataFrame(copia_vab).rename(columns=str.lower).add_prefix("vab_")
 base = pd.concat([taxa_obito, taxa_homem, df_cor, df_vab, resultado, divisor2019],axis=1)
 base["uf"] = base.index.str[:2]
 base = base.drop(index="53001") #exclui coluna do DF 
-print(base.dtypes)
-print(base)
+#print(base.dtypes)
+#print(base)
 #CRIA DICIONARIOS
 
 dic1 = pd.DataFrame({
@@ -240,12 +240,14 @@ dic1 = pd.DataFrame({
        "Proporção do Valor Adicionado Bruto da indústria na microrregião em 2019",
        "Proporção do Valor Adicionado Bruto dos serviços na microrregião em 2019",
        "Proporção do Valor Adicionado Bruto da administração, defesa, educação e saúde públicas e seguridade social  na microrregião em 2019",
-       "Índice (IFDM) médio de emprego e renda",
-       "Índice (IFDM) médio de educação",
-       "Índice (IFDM) médio de saúde",
-       "População total de 2019",
+       "Índice (IFDM) médio de emprego e renda de 2019 por microrregião",
+       "Índice (IFDM) médio de educação de 2019 por microrregião",
+       "Índice (IFDM) médio de saúde de 2019 por microrregião",
+       "População total de 2019 por microrregião",
        "Código da Unidade da Federação - Conferir dicionário 2"
 
     ]
 })
-print(dic1)
+#print(dic1)
+dic2 = dtb[["UF", "Nome_UF"]].drop_duplicates()
+dic3 = (dtb[["chave", "Nome_Microrregião"]].drop_duplicates())
