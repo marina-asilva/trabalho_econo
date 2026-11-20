@@ -224,3 +224,28 @@ base["uf"] = base.index.str[:2]
 base = base.drop(index="53001") #exclui coluna do DF 
 print(base.dtypes)
 print(base)
+#CRIA DICIONARIOS
+
+dic1 = pd.DataFrame({
+    "coluna": base.columns.tolist(),                 # nomes reais da base
+    "descricao": [
+       "Taxa de suicídio por 100 mil habitantes na microrregião em 2019", 
+       "Proporção de homens na microrregião em 2022",
+       "Proporção de brancos na microrregião em 2022",
+       "Proporção de pretos na microrregião em 2022",
+       "Proporção de amarelos na microrregião em 2022",
+       "Proporção de pardos na microrregião em 2022",
+       "Proporção de indígenas na microrregião em 2022",
+       "Proporção do Valor Adicionado Bruto da agropecuária na microrregião em 2019",
+       "Proporção do Valor Adicionado Bruto da indústria na microrregião em 2019",
+       "Proporção do Valor Adicionado Bruto dos serviços na microrregião em 2019",
+       "Proporção do Valor Adicionado Bruto da administração, defesa, educação e saúde públicas e seguridade social  na microrregião em 2019",
+       "Índice (IFDM) médio de emprego e renda",
+       "Índice (IFDM) médio de educação",
+       "Índice (IFDM) médio de saúde",
+       "População total de 2019",
+       "Código da Unidade da Federação - Conferir dicionário 2"
+
+    ]
+})
+print(dic1)
