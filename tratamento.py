@@ -57,12 +57,19 @@ def merge_municipio (tabela):
     ref = dtb[["cod_mun_6", "chave"]].drop_duplicates() #apenas retirando duplicatas, normal
     res = tabela.merge(ref, on = "cod_mun_6", how = "left", validate = "m:1", indicator = True) #funcao de merge -> funciona como procv
     fora = ~tabela["cod_mun_6"].isin(ref["cod_mun_6"])    # essa linha foi usada para conferir quais linhas nao estavam no merge -> com ela descobrimos que a primeira linha da raca sao informacoes do brasil, por isso tratamos raca no bloco de cima
-    print(res["_merge"].value_counts()), print(tabela[fora]) 
+    #print(res["_merge"].value_counts()) # isso eh continuacao da conferencia que esta no def 
+    #print(tabela[fora]) # isso eh continuacao da conferencia que esta no def 
+    return res 
 
-for nome,tabela in {"homem":homem,"raca":raca,"populacao":populacao}.items():
-    print(nome)
-    merge_municipio(tabela)
-
+#for nome,tabela in {"homem":homem,"raca":raca,"populacao":populacao}.items(): # isso eh continuacao da conferencia que esta no def 
+    #print(nome)
+    #merge_municipio(tabela)
+raca=merge_municipio(raca)
+homem=merge_municipio(homem)
+populacao=merge_municipio(populacao)
+#for nome,tabela in {"homem":homem,"raca":raca,"populacao":populacao}.items(): # confere se deu certo as mudancas de variavel depois do merge
+   #print(nome,tabela.head())
+   #print(nome,tabela.tail(10))
 
 #TRATANDO OBITOS
 obitos["obitos"] = obitos["obitos"].replace("-", "0") 
