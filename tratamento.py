@@ -119,7 +119,7 @@ taxa_homem = n_homem / divisor2022
 #Rodando isso descobrimos que era os tracos, que vamos trocar por 0
 
 raca[["indigena","amarela"]] = raca[["indigena","amarela"]].replace("-", 0)
-
+raca[["indigena","amarela"]] = raca[["indigena","amarela"]].astype(int)
 cor = {}
 for nome in ["branca", "preta", "amarela", "parda", "indigena"]:
   cor[nome] = raca.groupby("chave")[nome].sum()
@@ -127,4 +127,30 @@ for nome in ["branca", "preta", "amarela", "parda", "indigena"]:
 resultado = {}
 for nome, cores in cor.items():
   resultado[nome] = cores / divisor2022
-print(resultado)
+#print(resultado)
+
+#TRATAMENTO VAB 
+#peguei codigo do importacao para entender como ele importava a tabela vab
+#vab = pd.read_excel(
+    #PASTA / "VAB.xlsx",
+   # sheet_name=["AGRO", "IND", "SERV", "ADM"],
+   # header=None,
+    #skiprows=4,
+   # skipfooter=1,
+   # names=["cod_micro", "nome", "valor_2019", "unidade", "valor_2023"],
+   # dtype={"cod_micro": str},
+#A ideia foi primeiro testar o codigo sozinho e depois colocar no looping
+#copia_vab = vab["AGRO"].copy()
+#print(copia_vab.head())
+#print(copia_vab.shape, copia_vab.dtypes)
+#copia_vab = copia_vab.drop(index = [0])
+#copia_vab["valor_2019"] = copia_vab["valor_2019"].astype(float)
+#agro = copia_vab.set_index("cod_micro")["valor_2019"]
+copia_vab = {}
+for setor in ["AGRO", "IND", "SERV", "ADM"]:
+   temp =vab[setor].copy()
+   temp = temp.drop(index = [0])
+   temp["valor_2019"] = temp["valor_2019"].astype(float)
+   temp["valor_2019"] = temp["valor_2019"]/100
+   copia_vab[setor] = temp.set_index("cod_micro")["valor_2019"]
+#print(copia_vab.items())
