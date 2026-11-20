@@ -101,6 +101,12 @@ taxa_obito = mortes/ divisor2019 * 100_000
 #s1 = homem.set_index("cod_mun_6")["pop_total"].sort_index()     # chave vira índice, depois ordena
 #s2 = raca.set_index("cod_mun_6")["total"].sort_index()
 #print(s1.equals(s2))       
-#dif = s1 != s2        # 3) máscara: True onde os valores diferem 
+#dif = s1 != s2         máscara: True onde os valores diferem 
 #print(dif.sum())  
-#print(pd.concat([s1, s2], axis=1)[dif])   # 4) mostra só as linhas que diferem, lado a lado
+#print(pd.concat([s1, s2], axis=1)[dif])   #mostra só as linhas que diferem, lado a lado
+divisor2022 = raca.groupby("chave")["total"].sum()
+#TRATAMENTO HOMEM 
+n_homem =  homem.groupby("chave")["homens"].sum()
+taxa_homem = n_homem / divisor2022 
+print(taxa_homem)
+
