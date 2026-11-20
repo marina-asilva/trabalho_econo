@@ -108,5 +108,23 @@ divisor2022 = raca.groupby("chave")["total"].sum()
 #TRATAMENTO HOMEM 
 n_homem =  homem.groupby("chave")["homens"].sum()
 taxa_homem = n_homem / divisor2022 
-print(taxa_homem)
+#print(taxa_homem)
+#TRATAMENTO RACA2
+#Procurando o erro de objct para não rodar os dicionarios e definicao de variaveis
+#print(raca.dtypes)
+#conv = pd.to_numeric(raca["indigena"], errors="coerce")
+#print(raca.loc[conv.isna(),["indigena"]])
+#conv = pd.to_numeric(raca["amarela"], errors="coerce")
+#print(raca.loc[conv.isna(),["amarela"]])
+#Rodando isso descobrimos que era os tracos, que vamos trocar por 0
 
+raca[["indigena","amarela"]] = raca[["indigena","amarela"]].replace("-", 0)
+
+cor = {}
+for nome in ["branca", "preta", "amarela", "parda", "indigena"]:
+  cor[nome] = raca.groupby("chave")[nome].sum()
+
+resultado = {}
+for nome, cores in cor.items():
+  resultado[nome] = cores / divisor2022
+print(resultado)
