@@ -251,3 +251,10 @@ dic1 = pd.DataFrame({
 #print(dic1)
 dic2 = dtb[["UF", "Nome_UF"]].drop_duplicates()
 dic3 = (dtb[["chave", "Nome_Microrregião"]].drop_duplicates())
+
+#CRIA EXCEL E EXPORTA
+with pd.ExcelWriter("base_final.xlsx") as w:
+    base.to_excel(w, sheet_name="base", index_label="chave")
+    dic1.to_excel(w, sheet_name="Dicionário 1 ", index=False)
+    dic2.to_excel(w, sheet_name="Dicionário 2", index=False, startcol=0)
+    dic3.to_excel(w, sheet_name="Dicionário 2", index=False, startcol=3)
