@@ -218,3 +218,9 @@ for nome, cores in cor.items():
 
 df_cor = pd.DataFrame(prop_cor).add_prefix("prop_")
 df_vab = pd.DataFrame(copia_vab).rename(columns=str.lower).add_prefix("vab_")
+#CRIA BASE 
+base = pd.concat([taxa_obito, taxa_homem, df_cor, df_vab, resultado, divisor2019],axis=1)
+base["uf"] = base.index.str[:2]
+base = base.drop(index="53001") #exclui coluna do DF 
+print(base.dtypes)
+print(base)
