@@ -86,3 +86,8 @@ obitos = obitos[~(total|ignorado)].copy()
 #soma_a = obitos["obitos"].sum()    
 #soma_b = obitos_ignorado["obitos"].sum()      
 #print(soma_a + soma_b)   
+divisor2019 = populacao.groupby("chave")["pop_2019"].sum()
+#print(populacao.groupby("chave")["pop_2019"].sum()) 
+mortes = obitos.set_index("cod")["obitos"]          # série indexada por cod
+#print(mortes/ divisor2019 * 100_000)  
+taxa_obito = mortes/ divisor2019 * 100_000
