@@ -56,7 +56,7 @@ raca = raca.drop(index = [0])
 def merge_municipio (tabela):
     ref = dtb[["cod_mun_6", "chave"]].drop_duplicates() #apenas retirando duplicatas, normal
     res = tabela.merge(ref, on = "cod_mun_6", how = "left", validate = "m:1", indicator = True) #funcao de merge -> funciona como procv
-    fora = ~tabela["cod_mun_6"].isin(ref["cod_mun_6"])    # essa linha foi usada para conferir quais linhas nao estavam no merge -> com ela descobrimos que a primeira linha da raca sao informacoes do brasil, por isso tratamos raca no bloco de cima
+    #fora = ~tabela["cod_mun_6"].isin(ref["cod_mun_6"])    # essa linha foi usada para conferir quais linhas nao estavam no merge -> com ela descobrimos que a primeira linha da raca sao informacoes do brasil, por isso tratamos raca no bloco de cima
     #print(res["_merge"].value_counts()) # isso eh continuacao da conferencia que esta no def 
     #print(tabela[fora]) # isso eh continuacao da conferencia que esta no def 
     return res 
@@ -68,9 +68,10 @@ raca=merge_municipio(raca)
 homem=merge_municipio(homem)
 populacao=merge_municipio(populacao)
 #for nome,tabela in {"homem":homem,"raca":raca,"populacao":populacao}.items(): # confere se deu certo as mudancas de variavel depois do merge
-   #print(nome,tabela.head())
-   #print(nome,tabela.tail(10))
-
+#   print(nome,tabela.head())
+#   print(nome,tabela.tail(10))
+#print(raca.columns)
+#print(homem.columns)
 #TRATANDO OBITOS
 obitos["obitos"] = obitos["obitos"].replace("-", "0") 
 obitos["obitos"] = obitos["obitos"].astype(int)
@@ -86,8 +87,20 @@ obitos = obitos[~(total|ignorado)].copy()
 #soma_a = obitos["obitos"].sum()    
 #soma_b = obitos_ignorado["obitos"].sum()      
 #print(soma_a + soma_b)   
-divisor2019 = populacao.groupby("chave")["pop_2019"].sum()
+divisor2019 = populacao.groupby("chave")["pop_2019"].sum() # soma a populacao do municipio (que esta em pop_2019) para cada uma das microregioes
 #print(populacao.groupby("chave")["pop_2019"].sum()) 
 mortes = obitos.set_index("cod")["obitos"]          # série indexada por cod
 #print(mortes/ divisor2019 * 100_000)  
 taxa_obito = mortes/ divisor2019 * 100_000
+#CHECANDO SE A TABELA DE RACA E GENERO TEM A MESMA POPULACAO TOTAL
+
+#print(raca["cod_mun_6"].dtypes)
+#print(raca["total"].dtypes)
+#print(homem["cod_mun_6"].dtypes)
+#print(homem["pop_total"].dtypes)
+#s1 = homem.set_index("cod_mun_6")["pop_total"].sort_index()     # chave vira índice, depois ordena
+#s2 = raca.set_index("cod_mun_6")["total"].sort_index()
+#print(s1.equals(s2))       
+#dif = s1 != s2        # 3) máscara: True onde os valores diferem 
+#print(dif.sum())  
+#print(pd.concat([s1, s2], axis=1)[dif])   # 4) mostra só as linhas que diferem, lado a lado
