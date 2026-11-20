@@ -49,11 +49,16 @@ populacao["pop_2019"] = populacao["pop_2019"].astype(int)
 #print(populacao)
 populacao = populacao.rename(columns={"cod": "cod_mun_6"})
 
+#TRATANDO RACA
+raca = raca.drop(index = [0])
+
 #ASSOCIANDO MUNICIPIOS E MICRORREGIOES
 def merge_municipio (tabela):
     ref = dtb[["cod_mun_6", "chave"]].drop_duplicates() #apenas retirando duplicatas, normal
     res = tabela.merge(ref, on = "cod_mun_6", how = "left", validate = "m:1", indicator = True) #funcao de merge -> funciona como procv
-    return print(res["_merge"].value_counts())
+    fora = ~tabela["cod_mun_6"].isin(ref["cod_mun_6"])    # essa linha foi usada para conferir quais linhas nao estavam no merge -> com ela descobrimos que a primeira linha da raca sao informacoes do brasil, por isso tratamos raca no bloco de cima
+    print(res["_merge"].value_counts()), print(tabela[fora]) 
+
 for nome,tabela in {"homem":homem,"raca":raca,"populacao":populacao}.items():
     print(nome)
     merge_municipio(tabela)
@@ -71,6 +76,6 @@ total = obitos["cod"] == "Total"
 obitos = obitos[~(total|ignorado)].copy()
 #print(obitos)
 
-#soma_a = obitos["obitos"].sum()      # 23
-#soma_b = obitos_ignorado["obitos"].sum()      # 5
+#soma_a = obitos["obitos"].sum()    
+#soma_b = obitos_ignorado["obitos"].sum()      
 #print(soma_a + soma_b)   
