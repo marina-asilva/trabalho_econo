@@ -3,7 +3,7 @@ from importacao import obitos, populacao, homem, raca, dtb, vab, ifdm
 
 # Conferências (comentadas para não poluir a saída; descomentar para rodar)
 
-
+#PADRONIZANDO CODIGOS DE MUNICIPIO E MICROREGIAO
 def separar_nome(tabela, coluna):
     """Recebe uma tabela e o nome da coluna com 'CODIGO NOME' e devolve a tabela com duas colunas novas."""
     tabela[["cod", "nome"]] = tabela[coluna].str.split(" ", n=1, expand=True)
@@ -15,7 +15,7 @@ populacao = separar_nome(populacao,"municipio")
 #print(populacao.head())
 #print(populacao.tail(10))
 
-#PADRONIZANDO CODIGOS DE MUNICIPIO E MICROREGIAO
+
 def padronizar_codigo (tabela,coluna):
     """Recebe uma tabela e o nome da coluna com codigo de municipio com 7 digitos e devolve a tabela com uma coluna a mais com 6 """
     tabela["cod_mun_6"] = tabela[coluna].str[:6]
@@ -58,6 +58,7 @@ raca = raca.drop(index = [0])
 ifdm_rename = {}#aplicando o rename para todas as abas
 for nome_aba,tabela in ifdm.items():
    ifdm_rename[nome_aba] = tabela.rename(columns={"COD_MUNIC":"cod_mun_6" })
+
 #ASSOCIANDO MUNICIPIOS E MICRORREGIOES
 def merge_municipio (tabela):
     ref = dtb[["cod_mun_6", "chave"]].drop_duplicates() #apenas retirando duplicatas, normal
@@ -81,6 +82,7 @@ for nome, t in ifdm_rename.items():
 #   print(nome,tabela.tail(10))
 #print(raca.columns)
 #print(homem.columns)
+
 #TRATANDO OBITOS
 obitos["obitos"] = obitos["obitos"].replace("-", "0") 
 obitos["obitos"] = obitos["obitos"].astype(int)
@@ -101,6 +103,7 @@ divisor2019 = populacao.groupby("chave")["pop_2019"].sum() # soma a populacao do
 mortes = obitos.set_index("cod")["obitos"]          # série indexada por cod
 #print(mortes/ divisor2019 * 100_000)  
 taxa_obito = mortes/ divisor2019 * 100_000
+
 #CHECANDO SE A TABELA DE RACA E GENERO TEM A MESMA POPULACAO TOTAL
 
 #print(raca["cod_mun_6"].dtypes)
@@ -198,10 +201,20 @@ for dim in ["emprego_renda", "educacao", "saude"]:
 resultado = pd.DataFrame(medias)
 #print(resultado)
 #print(len(resultado))
+#ANALISANDO CIDADES REMOVIDAS DO IFDM
 removidos = tab[tab.isna().any(axis=1)]
 cidades = ifdm_rename["IFDM Educação"].set_index("cod_mun_6")
 nomes_micro = dtb.drop_duplicates("chave").set_index("chave")["Nome_Microrregião"]
 info = cidades.loc[removidos.index, ["NOME_MUNIC"]].copy()
 info["chave"] = pop_idx.loc[removidos.index, "chave"]
 info["nome_micro"] = info["chave"].map(nomes_micro)
-print(pd.concat([info, removidos], axis=1))
+#print(pd.concat([info, removidos], axis=1))
+#RENOMEANDO VARIAVEIS 
+taxa_obito= taxa_obito.rename("taxa_obito")
+taxa_homem= taxa_homem.rename("prop_homem")
+prop_cor = {}
+for nome, cores in cor.items():
+    prop_cor[nome] = cores / divisor2022
+
+df_cor = pd.DataFrame(prop_cor).add_prefix("prop_")
+df_vab = pd.DataFrame(copia_vab).rename(columns=str.lower).add_prefix("vab_")
