@@ -8,7 +8,7 @@ Trabalho empírico de **Econometria I**
 
 O trabalho estima, por MQO em cross-section, a relação entre a taxa de suicídio (por 100 mil habitantes, 2019) e a composição setorial do Valor Adicionado Bruto (VAB) das microrregiões brasileiras: agropecuária, indústria e administração pública (serviços é a categoria omitida). Os controles são os componentes do IFDM de 2019 (Emprego & Renda, Educação e Saúde), a proporção de brancos, a proporção de homens e dummies de UF.
 
-O tratamento das bases é feito em Python (pandas). A estimação é feita em R.
+O tratamento das bases é feito em Python (pandas). A estimação é feita em R, no script `regressoes.R`: três especificações de MQO com erros-padrão robustos, testes de diagnóstico e exercícios de robustez. O método e os resultados estão descritos no relatório.
 
 ## Estrutura do repositório
 
@@ -18,6 +18,9 @@ trabalho_econo/
 ├── tratamento.py        # trata as bases e gera a base final
 ├── base_final.xlsx      # base final (abas: base, dic1, dic2)
 ├── requirements.txt     # pacotes de Python
+├── regressoes.R         # estimações, testes e gráficos
+├── trabalho_econo.Rproj # projeto do RStudio
+├── fig*.png             # figuras geradas pelo regressoes.R
 └── dados/
     └── brutos/          # bases como foram baixadas
 ```
@@ -50,7 +53,8 @@ Uma linha por microrregião (558 microrregiões), com a chave de 5 dígitos (có
 1. Instale os pacotes: `pip install -r requirements.txt`.
 2. Mantenha as bases brutas em `dados/brutos/`, com os nomes da tabela acima.
 3. Rode `python tratamento.py`. O script importa `importacao.py`, trata as bases e grava `base_final.xlsx`.
-
+4. No R, instale os pacotes: `install.packages(c("AER", "readxl", "ggplot2"))`.
+5. Abra `trabalho_econo.Rproj` no RStudio e rode `regressoes.R`. O script lê `base_final.xlsx` da raiz do repositório e grava as figuras `.png` nela.
 O `importacao.py` encontra a pasta de dados a partir do próprio local do arquivo, então pode ser rodado de qualquer diretório.
 
 ## Uso de IA
