@@ -6,7 +6,7 @@ library(AER)
 library(readxl)
 
 # Leitura e preparo 
-dados <- as.data.frame(read_excel("~/Downloads/base_final.xlsx", sheet = "base"))
+dados <- as.data.frame(read_excel("base_final.xlsx", sheet = "base"))
 
 dados$suic<-dados$taxa_obito
 dados$agro<-dados$vab_agro
